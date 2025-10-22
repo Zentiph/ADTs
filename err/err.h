@@ -2,7 +2,7 @@
 /// @file err.h
 /// @author Zentiph
 /// @brief Error printing interface.
-/// @version 0.1
+/// @version 1.0
 /// @date 2025-10-22
 ///
 /// @copyright Copyright (c) 2025
