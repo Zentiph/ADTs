@@ -9,6 +9,9 @@
 ///
 ///
 
+#ifndef ZEN_ERR_H
+#define ZEN_ERR_H
+
 ///
 /// @brief Print an error and exit.
 ///
@@ -17,3 +20,5 @@
 /// @param ...    - The format arguments.
 ///
 void error(int code, char *format, ...) __attribute__((noreturn));
+
+#endif // ZEN_ERR_H
