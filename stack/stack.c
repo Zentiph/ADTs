@@ -31,8 +31,9 @@ static inline bool stack_is_full(const stack_t stack) {
    return stack->len >= stack->capacity;
 }
 
-static inline bool stack_can_shrink(const stack_t stack) {
-   return stack->len < stack->capacity / 2;
+static inline bool stack_should_shrink(const stack_t stack) {
+   return stack->capacity >= (stack->len * 4) &&
+          stack->capacity > ADT_STACK_SIZE_INIT;
 }
 
 static void stack_grow(stack_t stack) {
@@ -56,23 +57,15 @@ static void stack_grow(stack_t stack) {
 }
 
 static void stack_shrink(stack_t stack) {
-   size_t new_cap = (stack->capacity < ADT_STACK_SIZE_INIT)
-                       ? ADT_STACK_SIZE_INIT
-                       : stack->capacity / ADT_STACK_REALLOC_MULT;
-
-   if (new_cap > stack->capacity) {
-      stack_destroy(stack);
-      error(1, "Attempt to shrink stack resulted in larger capacity");
-   }
+   size_t new_cap = stack->capacity / 2;
+   if (new_cap < ADT_STACK_SIZE_INIT)
+      new_cap = ADT_STACK_SIZE_INIT;
 
    void **tmp = realloc(stack->items, sizeof(*stack->items) * new_cap);
-   if (!tmp) {
-      stack_destroy(stack);
-      error(1, "Out of memory");
+   if (tmp) {
+      stack->items = tmp;
+      stack->capacity = new_cap;
    }
-
-   stack->items = tmp;
-   stack->capacity = new_cap;
 }
 
 stack_t stack_create(void) {
@@ -110,8 +103,7 @@ void *stack_pop(stack_t stack) {
       error(1, "Cannot pop empty stack");
 
    void *popped = stack->items[--stack->len];
-
-   while (stack_can_shrink(stack)) {
+   if (stack_should_shrink(stack)) {
       stack_shrink(stack);
    }
 
@@ -121,8 +113,16 @@ void *stack_pop(stack_t stack) {
 void stack_clear(stack_t stack) {
    assert(stack);
 
-   free(stack->items);
-   stack = stack_create();
+   stack->len = 0;
+   if (stack->capacity > ADT_STACK_SIZE_INIT) {
+      void **tmp =
+         realloc(stack->items, sizeof(*stack->items) * ADT_STACK_SIZE_INIT);
+      if (!tmp && stack->items)
+         error(1, "Out of memory");
+
+      stack->items = tmp ? tmp : stack->items;
+      stack->capacity = ADT_STACK_SIZE_INIT;
+   }
 }
 
 void *stack_top(const stack_t stack) {

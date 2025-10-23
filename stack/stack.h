@@ -13,6 +13,7 @@
 #define ADT_STACK_H
 
 #include <stdbool.h>
+#include <stddef.h>
 
 #ifndef ADT_STACK_SIZE_INIT
 /// The initial size of the stack.
@@ -24,12 +25,12 @@
 #endif
 
 #ifndef ADT_STACK_REALLOC_MULT
-/// The initial size of the stack.
+/// The multiplier to use when increase the stack's capacity.
 #define ADT_STACK_REALLOC_MULT 2
 #endif
 
-#if ADT_STACK_REALLOC_MULT < 1
-#error Stack realloc multiplier must be >= 1
+#if ADT_STACK_REALLOC_MULT < 2
+#error Stack realloc multiplier must be >= 2
 #endif
 
 #ifndef ADT__STACK_IMPLEMENTATION
@@ -63,8 +64,8 @@ void stack_push(stack_t stack, void *item);
 ///
 /// @brief Pop an item from a stack.
 ///
-/// @param stack - The stack to pop from.
-/// @return int  - The popped item.
+/// @param stack  - The stack to pop from.
+/// @return void* - The popped item.
 ///
 void *stack_pop(stack_t stack);
 
@@ -78,8 +79,8 @@ void stack_clear(stack_t stack);
 ///
 /// @brief Get the top item on a stack without popping it.
 ///
-/// @param stack - The stack to view the top item of.
-/// @return int  - The top item.
+/// @param stack  - The stack to view the top item of.
+/// @return void* - The top item.
 ///
 void *stack_top(const stack_t stack);
 
