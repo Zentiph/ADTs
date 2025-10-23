@@ -52,7 +52,7 @@ static void _stack_realloc(stack_t stack) {
    stack->items = tmp;
 }
 
-const stack_t stack_create(void) {
+stack_t stack_create(void) {
    stack_t stack = (stack_t)malloc(sizeof(*stack));
    if (!stack)
       return NULL;
@@ -79,16 +79,20 @@ void stack_push(stack_t stack, void *item) {
 }
 
 void *stack_pop(stack_t stack) {
-   if (stack->ptr == 0) {
+   if (stack->ptr == 0)
       error(1, "Cannot pop empty stack");
-   }
 
    return stack->items[--stack->ptr];
 }
 
 void stack_clear(stack_t stack) { stack->ptr = 0; }
 
-void *stack_top(const stack_t stack) { return stack->items[stack->ptr - 1]; }
+void *stack_top(const stack_t stack) {
+   if (stack->ptr == 0)
+      error(1, "Cannot top empty stack");
+
+   return stack->items[stack->ptr - 1];
+}
 
 bool stack_is_empty(const stack_t stack) { return stack->ptr == 0; }
 

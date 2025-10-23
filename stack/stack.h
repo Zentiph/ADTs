@@ -35,7 +35,7 @@ typedef struct {
 ///
 /// @return stack_t - The new stack, or NULL if mallocation fails.
 ///
-const stack_t stack_create(void);
+stack_t stack_create(void);
 
 ///
 /// @brief Destroy a stack.
