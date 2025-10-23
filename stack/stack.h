@@ -16,16 +16,24 @@
 
 #ifndef ADT_STACK_SIZE_INIT
 /// THe initial size of the stack.
-#define ADT_STACK_SIZE_INIT 128
+#define ADT_STACK_SIZE_INIT 32
 #endif
 
-#ifndef ADT_STACK_ALLOC_MULT
+#if ADT_STACK_SIZE_INIT < 0
+#error Initial stack size must be >= 0
+#endif
+
+#ifndef ADT_STACK_REALLOC_MULT
 /// The initial size of the stack.
-#define ADT_STACK_ALLOC_MULT 2
+#define ADT_STACK_REALLOC_MULT 2
+#endif
+
+#if ADT_STACK_REALLOC_MULT < 1
+#error Stack realloc multiplier must be >= 1
 #endif
 
 #ifndef ADT__STACK_IMPLEMENTATION
-/// A stack, which implements a first-in-last-out (FILO) system.
+/// A stack, which implements a last-in-first-out (LIFO) system.
 typedef struct {
 } *stack_t;
 #endif

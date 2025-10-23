@@ -32,9 +32,9 @@ static inline bool stack_is_full(const stack_t stack) {
 static void stack_grow(stack_t stack) {
    size_t new_cap = (stack->capacity == 0)
                        ? ADT_STACK_SIZE_INIT
-                       : stack->capacity * ADT_STACK_ALLOC_MULT;
+                       : stack->capacity * ADT_STACK_REALLOC_MULT;
 
-   if (ADT_STACK_ALLOC_MULT < 1 || new_cap < stack->capacity) {
+   if (ADT_STACK_REALLOC_MULT < 1 || new_cap < stack->capacity) {
       stack_destroy(stack);
       error(1, "Stack capacity overflow");
    }
@@ -47,6 +47,14 @@ static void stack_grow(stack_t stack) {
 
    stack->items = tmp;
    stack->capacity = new_cap;
+}
+
+static void stack_shrink(stack_t stack) {
+   size_t new_cap = (stack->capacity < ADT_STACK_SIZE_INIT)
+                       ? ADT_STACK_SIZE_INIT
+                       : stack->capacity / ADT_STACK_REALLOC_MULT;
+
+   if (ADT_STACK_REALLOC_MULT < 1 || new_cap > stack->capacity)
 }
 
 stack_t stack_create(void) {
