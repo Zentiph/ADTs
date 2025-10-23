@@ -9,13 +9,15 @@
 ///
 ///
 
-#ifndef ZEN_STACK_H
-#define ZEN_STACK_H
+#ifndef ADT_STACK_H
+#define ADT_STACK_H
 
 #include <stdbool.h>
 
+#ifndef ADT_INITIAL_STACK_SIZE
 /// The initial size of the stack.
-#define INITIAL_STACK_SIZE 128 // 2 ^ 7
+#define ADT_INITIAL_STACK_SIZE 128 // 2 ^ 7
+#endif
 
 /// A stack, which implements a first-in-last-out (FILO) system.
 typedef struct stack_s *stack_t;
@@ -82,4 +84,4 @@ bool stack_empty(stack_t stack);
 ///
 size_t stack_length(stack_t stack);
 
-#endif // ZEN_STACK_H
+#endif // ADT_STACK_H

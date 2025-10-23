@@ -38,7 +38,7 @@ stack_t stack_create(void) {
    if (!stack)
       return NULL;
 
-   stack->size = INITIAL_STACK_SIZE;
+   stack->size = ADT_INITIAL_STACK_SIZE;
    stack->ptr = 0;
 
    stack->items = (int *)malloc(stack->size * sizeof(int));
