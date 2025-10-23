@@ -25,35 +25,32 @@ struct stack_s {
    void **items;
 };
 
-static inline bool _stack_full(const stack_t stack) {
+static inline bool stack_is_full(const stack_t stack) {
    return stack->ptr >= stack->capacity;
 }
 
-static void _stack_realloc(stack_t stack) {
-   if (stack->capacity == 0) { // first alloc
-      stack->capacity = ADT_STACK_SIZE_INIT;
-      stack->items = (void **)malloc(sizeof(void *) * stack->capacity);
+static void stack_grow(stack_t stack) {
+   size_t new_cap = (stack->capacity == 0)
+                       ? ADT_STACK_SIZE_INIT
+                       : stack->capacity * ADT_STACK_ALLOC_MULT;
 
-      if (!stack->items) {
-         stack_destroy(stack);
-         error(1, "Could not allocate memory for stack");
-      }
-      return;
+   if (ADT_STACK_ALLOC_MULT < 1 || new_cap < stack->capacity) {
+      stack_destroy(stack);
+      error(1, "Stack capacity overflow");
    }
 
-   stack->capacity *= ADT_STACK_ALLOC_MULT;
-   void **tmp =
-      (void **)realloc(stack->items, sizeof(void *) * stack->capacity);
+   void **tmp = realloc(stack->items, sizeof(*stack->items) * new_cap);
    if (!tmp) {
       stack_destroy(stack);
-      error(1, "Could not reallocate memory to expand stack size");
+      error(1, "Out of memory");
    }
 
    stack->items = tmp;
+   stack->capacity = new_cap;
 }
 
 stack_t stack_create(void) {
-   stack_t stack = (stack_t)malloc(sizeof(*stack));
+   stack_t stack = malloc(sizeof(*stack));
    if (!stack)
       return NULL;
 
@@ -72,8 +69,8 @@ void stack_destroy(stack_t stack) {
 }
 
 void stack_push(stack_t stack, void *item) {
-   if (_stack_full(stack))
-      _stack_realloc(stack);
+   if (stack_is_full(stack))
+      stack_grow(stack);
 
    stack->items[stack->ptr++] = item;
 }
