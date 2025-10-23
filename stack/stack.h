@@ -33,6 +33,11 @@
 #error Stack realloc multiplier must be >= 2
 #endif
 
+#ifndef ADT_STACK_SHRINKABLE_PROPORTION
+/// The proportion of a stack's size to its capacity at which it can be shrunk.
+#define ADT_STACK_SHRINKABLE_PROPORTION 4
+#endif
+
 #ifndef ADT__STACK_IMPLEMENTATION
 /// A stack, which implements a last-in-first-out (LIFO) system.
 typedef struct {

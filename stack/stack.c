@@ -32,7 +32,7 @@ static inline bool stack_is_full(const stack_t stack) {
 }
 
 static inline bool stack_should_shrink(const stack_t stack) {
-   return stack->capacity >= (stack->len * 4) &&
+   return stack->capacity >= (stack->len * ADT_STACK_SHRINKABLE_PROPORTION) &&
           stack->capacity > ADT_STACK_SIZE_INIT;
 }
 
