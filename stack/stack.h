@@ -15,7 +15,7 @@
 #include <stdbool.h>
 
 #ifndef ADT_STACK_SIZE_INIT
-/// THe initial size of the stack.
+/// The initial size of the stack.
 #define ADT_STACK_SIZE_INIT 32
 #endif
 
@@ -95,7 +95,7 @@ bool stack_is_empty(const stack_t stack);
 ///
 /// @brief Get the number of items in the stack.
 ///
-/// @param stack   - The stack to get the size of.
+/// @param stack   - The stack to get the length of.
 /// @return size_t - The number of items in the stack.
 ///
 size_t stack_length(const stack_t stack);
