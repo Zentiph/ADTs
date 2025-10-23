@@ -94,11 +94,19 @@ void *stack_top(const stack_t stack);
 bool stack_is_empty(const stack_t stack);
 
 ///
-/// @brief Get the number of items in the stack.
+/// @brief Get the number of items in a stack.
 ///
 /// @param stack   - The stack to get the length of.
 /// @return size_t - The number of items in the stack.
 ///
 size_t stack_length(const stack_t stack);
+
+///
+/// @brief Get the current capacity of a stack.
+///
+/// @param stack   - The stack to get the capacity of.
+/// @return size_t - The current capacity of the stack.
+///
+size_t stack_capacity(const stack_t stack);
 
 #endif // ADT_STACK_H

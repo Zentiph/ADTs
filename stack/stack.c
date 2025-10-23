@@ -145,3 +145,9 @@ size_t stack_length(const stack_t stack) {
 
    return stack->len;
 }
+
+size_t stack_capacity(const stack_t stack) {
+   assert(stack);
+
+   return stack->capacity;
+}
