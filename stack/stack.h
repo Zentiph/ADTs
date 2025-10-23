@@ -42,7 +42,7 @@ const stack_t stack_create(void);
 ///
 /// @param stack - The stack to destroy.
 ///
-void stack_destroy(const stack_t stack);
+void stack_destroy(stack_t stack);
 
 ///
 /// @brief Push an item to a stack.
@@ -50,7 +50,7 @@ void stack_destroy(const stack_t stack);
 /// @param stack - The stack to push to.
 /// @param item  - The item to push.
 ///
-void stack_push(const stack_t stack, void *item);
+void stack_push(stack_t stack, void *item);
 
 ///
 /// @brief Pop an item from a stack.
@@ -58,14 +58,14 @@ void stack_push(const stack_t stack, void *item);
 /// @param stack - The stack to pop from.
 /// @return int  - The popped item.
 ///
-void *stack_pop(const stack_t stack);
+void *stack_pop(stack_t stack);
 
 ///
 /// @brief Clear a stack.
 ///
 /// @param stack - The stack to clear.
 ///
-void stack_clear(const stack_t stack);
+void stack_clear(stack_t stack);
 
 ///
 /// @brief Get the top item on a stack without popping it.
@@ -82,7 +82,7 @@ void *stack_top(const stack_t stack);
 /// @return true  - If the stack is empty.
 /// @return false - If the stack is not empty.
 ///
-bool stack_empty(const stack_t stack);
+bool stack_is_empty(const stack_t stack);
 
 ///
 /// @brief Get the number of items in the stack.

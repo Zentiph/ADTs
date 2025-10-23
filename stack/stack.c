@@ -29,7 +29,7 @@ static inline bool _stack_full(const stack_t stack) {
    return stack->ptr >= stack->capacity;
 }
 
-static void _stack_realloc(const stack_t stack) {
+static void _stack_realloc(stack_t stack) {
    if (stack->capacity == 0) { // first alloc
       stack->capacity = ADT_STACK_SIZE_INIT;
       stack->items = (void **)malloc(sizeof(void *) * stack->capacity);
@@ -64,21 +64,21 @@ const stack_t stack_create(void) {
    return stack;
 }
 
-void stack_destroy(const stack_t stack) {
+void stack_destroy(stack_t stack) {
    if (!stack)
       return;
    free(stack->items);
    free(stack);
 }
 
-void stack_push(const stack_t stack, void *item) {
+void stack_push(stack_t stack, void *item) {
    if (_stack_full(stack))
       _stack_realloc(stack);
 
    stack->items[stack->ptr++] = item;
 }
 
-void *stack_pop(const stack_t stack) {
+void *stack_pop(stack_t stack) {
    if (stack->ptr == 0) {
       error(1, "Cannot pop empty stack");
    }
@@ -86,10 +86,10 @@ void *stack_pop(const stack_t stack) {
    return stack->items[--stack->ptr];
 }
 
-void stack_clear(const stack_t stack) { stack->ptr = 0; }
+void stack_clear(stack_t stack) { stack->ptr = 0; }
 
 void *stack_top(const stack_t stack) { return stack->items[stack->ptr - 1]; }
 
-bool stack_empty(const stack_t stack) { return stack->ptr == 0; }
+bool stack_is_empty(const stack_t stack) { return stack->ptr == 0; }
 
 size_t stack_length(const stack_t stack) { return stack->ptr; }
