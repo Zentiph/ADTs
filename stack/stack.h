@@ -65,6 +65,14 @@ stack_t stack_create(void);
 void stack_destroy(stack_t stack);
 
 ///
+/// @brief Destroy a stack with a deleter function for its elements.
+///
+/// @param stack   - The stack to destroy.
+/// @param deleter - The deleter to use on each of its elements.
+///
+void stack_destroy_with(stack_t stack, void (*deleter)(void *));
+
+///
 /// @brief Push an item to a stack. This operation may fail if the stack needs
 ///        to grow and memory cannot be reallocated for it.
 ///

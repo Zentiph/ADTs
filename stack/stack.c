@@ -123,6 +123,27 @@ void stack_destroy(stack_t stack) {
    free(stack);
 }
 
+void stack_destroy_with(stack_t stack, void (*deleter)(void *)) {
+   if (!stack)
+      return;
+
+   if (deleter) {
+      for (size_t i = 0; i < stack->len; i++) {
+         void *elem = stack->items[i];
+
+         if (elem == (void *)ADT_STACK_ERROR_OPERATION_ON_EMPTY)
+            continue;
+         if (elem == NULL)
+            continue;
+
+         deleter(elem);
+      }
+   }
+
+   free(stack->items);
+   free(stack);
+}
+
 bool stack_push(stack_t stack, void *item) {
    if (!stack || item == ADT_STACK_ERROR_OPERATION_ON_EMPTY)
       return false;
