@@ -24,7 +24,7 @@
 #endif
 
 #ifndef ADT_STACK_REALLOC_MULT
-/// The multiplier to use when increase the stack's capacity.
+/// The multiplier to use when increasing the stack's capacity.
 #define ADT_STACK_REALLOC_MULT 2
 #endif
 #if ADT_STACK_REALLOC_MULT < 2
@@ -38,6 +38,14 @@
 #if ADT_STACK_SHRINKABLE_PROPORTION < 2
 #error ADT_STACK_SHRINKABLE_PROPORTION must be >= 2
 #endif
+
+/// A sentinel value that is returned if NULL is passed as the stack argument in
+/// any stack functions.
+extern const void *ADT_STACK_ERROR_NULL_STACK;
+
+/// A sentinel value that is returned if an invalid operation is performed on an
+/// empty stack. This sentinel cannot be pushed to a stack.
+extern const void *ADT_STACK_ERROR_OPERATION_ON_EMPTY;
 
 /// A stack, which implements a last-in-first-out (LIFO) system.
 typedef struct stack_s *stack_t;
@@ -71,7 +79,7 @@ bool stack_push(stack_t stack, void *item);
 /// @brief Pop an item from a stack.
 ///
 /// @param stack  - The stack to pop from.
-/// @return void* - The popped item, or NULL if the stack is empty.
+/// @return void* - The popped item, or ADT_STACK_EMPTY if the stack is empty.
 ///
 void *stack_pop(stack_t stack);
 
@@ -103,7 +111,7 @@ bool stack_reserve(stack_t stack, size_t min_capacity);
 /// @brief Get the top item on a stack without popping it.
 ///
 /// @param stack  - The stack to view the top item of.
-/// @return void* - The top item, or NULL if the stack is empty.
+/// @return void* - The top item, or ADT_STACK_EMPTY if the stack is empty.
 ///
 void *stack_top(const stack_t stack);
 
@@ -120,7 +128,8 @@ bool stack_is_empty(const stack_t stack);
 /// @brief Get the number of items in a stack.
 ///
 /// @param stack   - The stack to get the length of.
-/// @return size_t - The number of items in the stack.
+/// @return size_t - The number of items in the stack, or -1 if the stack is
+///                  NULL.
 ///
 size_t stack_length(const stack_t stack);
 
@@ -128,7 +137,8 @@ size_t stack_length(const stack_t stack);
 /// @brief Get the current capacity of a stack.
 ///
 /// @param stack   - The stack to get the capacity of.
-/// @return size_t - The current capacity of the stack.
+/// @return size_t - The current capacity of the stack, or -1 if the stack is
+///                  NULL.
 ///
 size_t stack_capacity(const stack_t stack);
 
