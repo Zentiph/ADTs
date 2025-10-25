@@ -108,6 +108,17 @@ bool stack_clear(stack_t stack);
 bool stack_reserve(stack_t stack, size_t min_capacity);
 
 ///
+/// @brief Grow the stack in anticipation for the addition of more elements.
+///
+/// @param stack    - The stack to reserve memory for.
+/// @param capacity - The capacity of the stack after reserving. The stack's new
+///                   capacity will not be lowered below its current capacity.
+/// @return true    - If the operation successfully reserved the desired space.
+/// @return false   - If the operation was unsuccessful (reallocation failed).
+///
+bool stack_reserve_exact(stack_t stack, size_t capacity);
+
+///
 /// @brief Get the top item on a stack without popping it.
 ///
 /// @param stack  - The stack to view the top item of.

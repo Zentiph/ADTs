@@ -183,6 +183,16 @@ bool stack_reserve(stack_t stack, size_t min_capacity) {
    return stack_grow(stack, target);
 }
 
+bool stack_reserve_exact(stack_t stack, size_t capacity) {
+   if (capacity <= stack->capacity)
+      return true;
+
+   if (capacity < ADT_STACK_SIZE_INIT)
+      capacity = ADT_STACK_SIZE_INIT;
+
+   return stack_grow(stack, capacity);
+}
+
 void *stack_top(const stack_t stack) {
    if (!stack)
       return (void *)ADT_STACK_ERROR_NULL_STACK;
