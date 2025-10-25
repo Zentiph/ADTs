@@ -19,30 +19,28 @@
 /// The initial size of the stack.
 #define ADT_STACK_SIZE_INIT 32
 #endif
-
 #if ADT_STACK_SIZE_INIT < 0
-#error Initial stack size must be >= 0
+#error ADT_STACK_SIZE_INIT must be >= 0
 #endif
 
 #ifndef ADT_STACK_REALLOC_MULT
 /// The multiplier to use when increase the stack's capacity.
 #define ADT_STACK_REALLOC_MULT 2
 #endif
-
 #if ADT_STACK_REALLOC_MULT < 2
-#error Stack realloc multiplier must be >= 2
+#error ADT_STACK_REALLOC_MULT must be >= 2
 #endif
 
 #ifndef ADT_STACK_SHRINKABLE_PROPORTION
 /// The proportion of a stack's size to its capacity at which it can be shrunk.
 #define ADT_STACK_SHRINKABLE_PROPORTION 4
 #endif
-
-#ifndef ADT__STACK_IMPLEMENTATION
-/// A stack, which implements a last-in-first-out (LIFO) system.
-typedef struct {
-} *stack_t;
+#if ADT_STACK_SHRINKABLE_PROPORTION < 2
+#error ADT_STACK_SHRINKABLE_PROPORTION must be >= 2
 #endif
+
+/// A stack, which implements a last-in-first-out (LIFO) system.
+typedef struct stack_s *stack_t;
 
 ///
 /// @brief Create a new stack. The stack is empty on creation.
@@ -59,33 +57,53 @@ stack_t stack_create(void);
 void stack_destroy(stack_t stack);
 
 ///
-/// @brief Push an item to a stack.
+/// @brief Push an item to a stack. This operation may fail if the stack needs
+///        to grow and memory cannot be reallocated for it.
 ///
-/// @param stack - The stack to push to.
-/// @param item  - The item to push.
+/// @param stack  - The stack to push to.
+/// @param item   - The item to push.
+/// @return true  - If this operation was successful.
+/// @return false - If this operation was unsuccessful.
 ///
-void stack_push(stack_t stack, void *item);
+bool stack_push(stack_t stack, void *item);
 
 ///
 /// @brief Pop an item from a stack.
 ///
 /// @param stack  - The stack to pop from.
-/// @return void* - The popped item.
+/// @return void* - The popped item, or NULL if the stack is empty.
 ///
 void *stack_pop(stack_t stack);
 
 ///
-/// @brief Clear a stack.
+/// @brief Clear a stack. This operation may fail if attempting to lower the
+///        capacity of the stack fails.
 ///
-/// @param stack - The stack to clear.
+/// @param stack  - The stack to clear.
+/// @return true  - If this operation was successful.
+/// @return false - If this operation was unsuccessful.
 ///
-void stack_clear(stack_t stack);
+bool stack_clear(stack_t stack);
+
+///
+/// @brief Grow the stack in anticipation for the addition of more elements.
+///
+/// @param stack        - The stack to reserve memory for.
+/// @param min_capacity - The minimum capacity of the stack after reserving.
+///                       The stack's new capacity will not be lowered below its
+///                       current capacity, and will be rounded up to the
+///                       nearest power of 2.
+/// @return true        - If the operation successfully reserved the desired
+///                       space.
+/// @return false       - If the operation was unsuccessful (realloc failed).
+///
+bool stack_reserve(stack_t stack, size_t min_capacity);
 
 ///
 /// @brief Get the top item on a stack without popping it.
 ///
 /// @param stack  - The stack to view the top item of.
-/// @return void* - The top item.
+/// @return void* - The top item, or NULL if the stack is empty.
 ///
 void *stack_top(const stack_t stack);
 

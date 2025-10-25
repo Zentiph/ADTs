@@ -10,15 +10,10 @@
 ///
 
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 #include <assert.h>
 
-#include "../err/err.h"
-
-typedef struct stack_s *stack_t;
-#define ADT__STACK_IMPLEMENTATION
 #include "stack.h"
 
 struct stack_s {
@@ -36,24 +31,51 @@ static inline bool stack_should_shrink(const stack_t stack) {
           stack->capacity > ADT_STACK_SIZE_INIT;
 }
 
-static void stack_grow(stack_t stack) {
+static size_t next_pow2(size_t x) {
+   if (x <= 1) // define next_pow2(0) = 1
+      return 1;
+
+   x--; // if x is already a power of two, it looks like 100...000.
+        // decrementing it by 1 looks like 011...111.
+
+   // for each bit position, propagate the top bit rightward and or
+   // so that every bit below the highest 1 becomes 1.
+   // e.g. 01010000 -> 01111111
+   for (size_t shift = 1; shift < sizeof(size_t) * 8; shift <<= 1)
+      x |= x >> shift;
+
+   // add one to carry all 1s over to get a clean power of 2
+   // e.g. 01111111 + 1 = 10000000
+   return x + 1;
+}
+
+static bool stack_grow(stack_t stack, size_t new_cap) {
+   if (new_cap < stack->capacity) {
+      return false; // overflow
+   }
+
+   void **tmp = realloc(stack->items, sizeof(*stack->items) * new_cap);
+   if (!tmp)
+      return false;
+
+   stack->items = tmp;
+   stack->capacity = new_cap;
+   return true;
+}
+
+static bool stack_grow_mult(stack_t stack) {
    size_t new_cap = (stack->capacity == 0)
                        ? ADT_STACK_SIZE_INIT
                        : stack->capacity * ADT_STACK_REALLOC_MULT;
 
-   if (new_cap < stack->capacity) {
-      stack_destroy(stack);
-      error(1, "Stack capacity overflow");
-   }
+   if (stack->capacity != 0 &&
+       new_cap / ADT_STACK_REALLOC_MULT != stack->capacity)
+      return false;
 
-   void **tmp = realloc(stack->items, sizeof(*stack->items) * new_cap);
-   if (!tmp) {
-      stack_destroy(stack);
-      error(1, "Out of memory");
-   }
+   if (!stack_grow(stack, new_cap))
+      return false;
 
-   stack->items = tmp;
-   stack->capacity = new_cap;
+   return true;
 }
 
 static void stack_shrink(stack_t stack) {
@@ -77,6 +99,9 @@ stack_t stack_create(void) {
    stack->len = 0;
    stack->items = NULL;
 
+   // alloc first time
+   stack_grow_mult(stack);
+
    return stack;
 }
 
@@ -87,49 +112,69 @@ void stack_destroy(stack_t stack) {
    free(stack);
 }
 
-void stack_push(stack_t stack, void *item) {
-   assert(stack);
+bool stack_push(stack_t stack, void *item) {
+   if (!stack)
+      return false;
 
-   if (stack_is_full(stack))
-      stack_grow(stack);
+   if (stack_is_full(stack)) {
+      stack_grow_mult(stack);
+
+      if (!stack->items) {
+         return false;
+      }
+   }
 
    stack->items[stack->len++] = item;
+   return true;
 }
 
 void *stack_pop(stack_t stack) {
    assert(stack);
 
    if (stack_is_empty(stack))
-      error(1, "Cannot pop empty stack");
+      return NULL;
 
    void *popped = stack->items[--stack->len];
-   if (stack_should_shrink(stack)) {
+   if (stack_should_shrink(stack))
       stack_shrink(stack);
-   }
 
    return popped;
 }
 
-void stack_clear(stack_t stack) {
-   assert(stack);
+bool stack_clear(stack_t stack) {
+   if (!stack)
+      return false;
 
    stack->len = 0;
    if (stack->capacity > ADT_STACK_SIZE_INIT) {
       void **tmp =
          realloc(stack->items, sizeof(*stack->items) * ADT_STACK_SIZE_INIT);
       if (!tmp && stack->items)
-         error(1, "Out of memory");
+         return false;
 
       stack->items = tmp ? tmp : stack->items;
       stack->capacity = ADT_STACK_SIZE_INIT;
    }
+
+   return true;
+}
+
+bool stack_reserve(stack_t stack, size_t min_capacity) {
+   if (min_capacity <= stack->capacity)
+      return true;
+
+   size_t target = next_pow2(min_capacity);
+   if (target < ADT_STACK_SIZE_INIT)
+      target = ADT_STACK_SIZE_INIT;
+
+   return stack_grow(stack, target);
 }
 
 void *stack_top(const stack_t stack) {
    assert(stack);
 
    if (stack_is_empty(stack))
-      error(1, "Cannot top empty stack");
+      return NULL;
 
    return stack->items[stack->len - 1];
 }
